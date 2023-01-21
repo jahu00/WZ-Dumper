@@ -194,7 +194,7 @@ namespace WzDumper {
                         tw.WriteStartAttribute("value");
                         tw.WriteValue(uolProp.Value);
                         tw.WriteEndElement();
-                        if (IncludePngMp3) {
+                        if (IncludePngMp3 && LinkType != LinkType.Skip) {
                             var obj = uolProp.LinkValue;
                             if (obj != null) {
                                 DumpFromUOL(uolProp, obj, wzPath);

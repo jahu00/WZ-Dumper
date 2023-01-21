@@ -156,7 +156,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MapleLib\MapleLib.csproj">
+    <ProjectReference Include="MapleLib\MapleLib.csproj">
       <Project>{28aab36d-942e-4476-a000-0e9de380f390}</Project>
       <Name>MapleLib</Name>
     </ProjectReference>

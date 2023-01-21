@@ -31,7 +31,8 @@ namespace WzDumper {
                 "Methods:\n" +
                 "Symbolic (recommended, requires admin privilage, default when running as admin)\n" +
                 "Hard (default when not running as admin, falls back to Copy mode for files that have reached the link limit)\n" +
-                "Copy (creates another copy entirely, use this if extracting to a remote drive)";
+                "Copy (creates another copy entirely, use this if extracting to a remote drive)\n" +
+                "Skip (skips creating copies)";
             toolTip.SetToolTip(LinkTypeLabel, linkTypeText);
             toolTip.SetToolTip(LinkTypeComboBox, linkTypeText);
             toolTip.SetToolTip(includeVersionInFolderBox, "Adds the file version to the end of the WZ folder (e.g. Base.wz_v81)");
@@ -622,9 +623,18 @@ namespace WzDumper {
                     FileInfo fi = new FileInfo(testFile);
                     fi.Directory.Create();
                     fi.Create().Close();
-                    bool res = LinkTypeComboBox.SelectedItem.Equals(LinkType.Symbolic) ? CreateSymbolicLink(testFile2, testFile, 0) : CreateHardLink(testFile2, testFile, IntPtr.Zero);
-                    if (!res) {
-                        MessageBox.Show("A test link could not be created on the output drive. The Link Type will be changed to Copy.", "Unable to Create Test Link", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    try
+                    {
+                        bool res = LinkTypeComboBox.SelectedItem.Equals(LinkType.Symbolic) ? CreateSymbolicLink(testFile2, testFile, 0) : CreateHardLink(testFile2, testFile, IntPtr.Zero);
+                        if (!res)
+                        {
+                            MessageBox.Show("A test link could not be created on the output drive. The Link Type will be changed to Copy.", "Unable to Create Test Link", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            LinkTypeComboBox.SelectedItem = LinkType.Copy;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show("An exception was thrown while attempting to create a symbolic link " + e.Message, "Unable to Create Test Link", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         LinkTypeComboBox.SelectedItem = LinkType.Copy;
                     }
                     fi.Directory.Delete(true);
@@ -691,6 +701,7 @@ namespace WzDumper {
     public enum LinkType : int {
         Hard = 1,
         Symbolic = 2,
-        Copy = 3
+        Copy = 3,
+        Skip = 4
     }
 }
